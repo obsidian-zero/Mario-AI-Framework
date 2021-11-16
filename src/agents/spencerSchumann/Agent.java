@@ -1,9 +1,12 @@
 package agents.spencerSchumann;
 
 import engine.core.MarioAgent;
+import engine.core.MarioEvent;
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
 import engine.helper.MarioActions;
+
+import java.util.ArrayList;
 
 /**
  * @author Spencer Schumann
@@ -25,7 +28,7 @@ public class Agent implements MarioAgent {
     }
 
     @Override
-    public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
+    public boolean[] getActions(MarioForwardModel model, MarioTimer timer, ArrayList<MarioEvent> gameEvents) {
         float[] marioPos = model.getMarioFloatPos();
         tiles.addObservation(model);
         int mx = (int) (marioPos[0] / 16.0f);

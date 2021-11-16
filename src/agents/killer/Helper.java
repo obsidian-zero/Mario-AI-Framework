@@ -1,10 +1,10 @@
-package agents.robinBaumgarten;
+package agents.killer;
+
+import java.util.ArrayList;
 
 import engine.core.MarioForwardModel;
 import engine.helper.GameStatus;
 import engine.helper.MarioActions;
-
-import java.util.ArrayList;
 
 public class Helper {
     public static final int visitedListPenalty = 1500;

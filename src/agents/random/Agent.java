@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import engine.core.MarioAgent;
+import engine.core.MarioEvent;
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
 
@@ -54,7 +55,7 @@ public class Agent implements MarioAgent {
     }
 
     @Override
-    public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
+    public boolean[] getActions(MarioForwardModel model, MarioTimer timer, ArrayList<MarioEvent> gameEvents) {
         return choices.get(rnd.nextInt(choices.size()));
     }
 

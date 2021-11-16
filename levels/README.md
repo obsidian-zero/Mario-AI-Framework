@@ -27,10 +27,10 @@ Symbol Reference:
 - '?' or '@': Special Question block
 - 'Q' or '!': Coin Question block
 - '1': Invisible 1 up block
-- '2': Invisible coin bock
+- '2': Invisible coin block
 - 'D': Used block
 - 'S': Normal Brick Block
-- 'C': Coing Brick Block
+- 'C': Coin Brick Block
 - 'U': Musrhoom Brick Block
 - 'L': 1 up Block
 - 'o': Coin

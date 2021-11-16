@@ -1,9 +1,12 @@
 package agents.glennHartmann;
 
 import engine.core.MarioAgent;
+import engine.core.MarioEvent;
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
 import engine.helper.MarioActions;
+
+import java.util.ArrayList;
 
 public class Agent implements MarioAgent {
     private boolean[] action = new boolean[MarioActions.numberOfActions()];
@@ -116,7 +119,7 @@ public class Agent implements MarioAgent {
     }
 
     @Override
-    public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
+    public boolean[] getActions(MarioForwardModel model, MarioTimer timer, ArrayList<MarioEvent> gameEvents) {
         byte[][] levelSceneFromBitmap = decode(model, model.getMarioSceneObservation()); // map of the scene
         byte[][] enemiesFromBitmap = decode(model, model.getMarioEnemiesObservation()); // map of enemies
 

@@ -1,9 +1,9 @@
-package agents.robinBaumgarten;
+package agents.killer;
+
+import java.util.ArrayList;
 
 import engine.core.MarioForwardModel;
 import engine.helper.GameStatus;
-
-import java.util.ArrayList;
 
 public class SearchNode {
     public int timeElapsed = 0;
@@ -42,6 +42,10 @@ public class SearchNode {
         if (parent != null) {
             this.remainingTimeEstimated = parent.estimateRemainingTimeChild(action, repetitions);
             this.distanceFromOrigin = parent.distanceFromOrigin + 1;
+            this.sceneSnapshot = parentPos.sceneSnapshot.clone();
+            for (int i = 0; i < repetitions; i++) {
+                this.sceneSnapshot.advance(action);
+            }
         }
         this.action = action;
         this.repetitions = repetitions;
@@ -77,9 +81,9 @@ public class SearchNode {
     public ArrayList<SearchNode> generateChildren() {
         ArrayList<SearchNode> list = new ArrayList<SearchNode>();
         ArrayList<boolean[]> possibleActions = Helper.createPossibleActions(this);
-        if (this.isLeafNode()) {
-            possibleActions.clear();
-        }
+//        if (this.isLeafNode()) {
+//            possibleActions.clear();
+//        }
         for (boolean[] action : possibleActions) {
             list.add(new SearchNode(action, repetitions, this));
         }
@@ -91,6 +95,23 @@ public class SearchNode {
             return false;
         }
         return this.sceneSnapshot.getGameStatus() != GameStatus.RUNNING;
+    }
+
+    public int getkilled() {
+        if (this.sceneSnapshot == null) {
+            return 0;
+        }
+        return this.sceneSnapshot.getKillsTotal();
+    }
+
+    public int ifwin() {
+        if (this.sceneSnapshot == null) {
+            return 0;
+        }
+        if(this.sceneSnapshot.getGameStatus() == GameStatus.WIN){
+            return 1;
+        }
+        return 0;
     }
 
     private float maxForwardMovement(float initialSpeed, int ticks) {

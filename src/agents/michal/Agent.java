@@ -1,9 +1,12 @@
 package agents.michal;
 
 import engine.core.MarioAgent;
+import engine.core.MarioEvent;
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
 import engine.helper.MarioActions;
+
+import java.util.ArrayList;
 
 public class Agent implements MarioAgent {
     private enum STATE {
@@ -69,7 +72,7 @@ public class Agent implements MarioAgent {
     }
 
     @Override
-    public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
+    public boolean[] getActions(MarioForwardModel model, MarioTimer timer, ArrayList<MarioEvent> gameEvents) {
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
 

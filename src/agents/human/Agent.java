@@ -1,12 +1,15 @@
 package agents.human;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
 import engine.core.MarioAgent;
+import engine.core.MarioEvent;
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
+import engine.helper.EventType;
 import engine.helper.MarioActions;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Agent extends KeyAdapter implements MarioAgent {
     private boolean[] actions = null;
@@ -17,7 +20,18 @@ public class Agent extends KeyAdapter implements MarioAgent {
     }
 
     @Override
-    public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
+    public boolean[] getActions(MarioForwardModel model, MarioTimer timer, ArrayList<MarioEvent> gameEvents) {
+
+        System.out.println("onGround: " + model.isMarioOnGround());
+        int kills = 0;
+        for (MarioEvent e : gameEvents) {
+            if (e.getEventType() == EventType.STOMP_KILL.getValue() || e.getEventType() == EventType.FIRE_KILL.getValue() ||
+                    e.getEventType() == EventType.FALL_KILL.getValue() || e.getEventType() == EventType.SHELL_KILL.getValue()) {
+                kills += 1;
+            }
+        }
+        System.out.println("kills: " + kills);
+
         return actions;
     }
 

@@ -1,10 +1,10 @@
 package engine.core;
 
-import java.util.ArrayList;
-
 import engine.helper.EventType;
 import engine.helper.GameStatus;
 import engine.helper.SpriteType;
+
+import java.util.ArrayList;
 
 public class MarioForwardModel {
     private static final int OBS_SCENE_SHIFT = 16;
@@ -224,6 +224,43 @@ public class MarioForwardModel {
      */
     public MarioForwardModel(MarioWorld world) {
         this.world = world;
+    }
+
+    /**
+     * Create a forward model object
+     *
+     * @param world the current level world that is being used. This class hides the
+     *              world object so the agents won't cheat.
+     * @param gameEvents the gameEvents indicate what happen
+     */
+    public MarioForwardModel(MarioWorld world, ArrayList<MarioEvent> gameEvents) {
+        this.world = world;
+        for (MarioEvent e : gameEvents) {
+            if (e.getEventType() == EventType.FIRE_KILL.getValue()) {
+                this.fireKill += 1;
+            }
+            if (e.getEventType() == EventType.STOMP_KILL.getValue()) {
+                this.stompKill += 1;
+            }
+            if (e.getEventType() == EventType.FALL_KILL.getValue()) {
+                this.fallKill += 1;
+            }
+            if (e.getEventType() == EventType.SHELL_KILL.getValue()) {
+                this.shellKill += 1;
+            }
+            if (e.getEventType() == EventType.COLLECT.getValue()) {
+                if (e.getEventParam() == SpriteType.FIRE_FLOWER.getValue()) {
+                    this.flowers += 1;
+                }
+                if (e.getEventParam() == SpriteType.MUSHROOM.getValue()) {
+                    this.mushrooms += 1;
+                }
+            }
+            if (e.getEventType() == EventType.BUMP.getValue() && e.getEventParam() == OBS_BRICK
+                    && e.getMarioState() > 0) {
+                this.breakBlock += 1;
+            }
+        }
     }
 
     /**

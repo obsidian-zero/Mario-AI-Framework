@@ -1,9 +1,12 @@
 package agents.trondEllingsen;
 
 import engine.core.MarioAgent;
+import engine.core.MarioEvent;
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
 import engine.helper.MarioActions;
+
+import java.util.ArrayList;
 
 public class Agent implements MarioAgent {
     private enum JumpType {
@@ -71,7 +74,7 @@ public class Agent implements MarioAgent {
     }
 
     @Override
-    public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
+    public boolean[] getActions(MarioForwardModel model, MarioTimer timer, ArrayList<MarioEvent> gameEvents) {
         final float marioSpeed = model.getMarioFloatVelocity()[0];
         final boolean dangerOfEnemy = enemyInRange(model, new Rectangle(-13, -57, 105, 87));
         final boolean dangerOfEnemyAbove = enemyInRange(model, new Rectangle(-28, 28, 58, 45));

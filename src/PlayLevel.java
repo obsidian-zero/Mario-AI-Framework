@@ -1,9 +1,9 @@
+import engine.core.MarioGame;
+import engine.core.MarioResult;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import engine.core.MarioGame;
-import engine.core.MarioResult;
 
 public class PlayLevel {
     public static void printResults(MarioResult result) {
@@ -31,9 +31,39 @@ public class PlayLevel {
         return content;
     }
 
+    public static void repeat(int times) {
+       String part_filepath = "./levels/original/lvl-";
+       for(int j=1; j<=15; j++) {
+           String full_filepath = part_filepath + j + ".txt";
+           float completion = 0;
+           float total_kill = 0;
+           float fall_kill = 0;
+           float coins = 0;
+           for (int i = 0; i < times; i++) {
+               MarioGame game = new MarioGame();
+               // printResults(game.playGame(getLevel("../levels/original/lvl-1.txt"), 200, 0));
+               MarioResult result = game.runGame(new agents.collector.Agent(), getLevel(full_filepath), 50, 0, true);
+               completion += result.getCompletionPercentage();
+               total_kill += result.getKillsTotal();
+               fall_kill += result.getKillsByFall();
+               coins += result.getCurrentCoins();
+           }
+           completion /= times;
+           total_kill /= times;
+           fall_kill /= times;
+           coins /= times;
+           System.out.println("========level " + j +"=======");
+           System.out.println("completion : " + completion);
+           System.out.println("total_kill : " + total_kill);
+           System.out.println("kill : " + (total_kill - fall_kill));
+           System.out.println("coins : " + coins);
+       }
+    }
+
     public static void main(String[] args) {
-        MarioGame game = new MarioGame();
-        // printResults(game.playGame(getLevel("../levels/original/lvl-1.txt"), 200, 0));
-        printResults(game.runGame(new agents.robinBaumgarten.Agent(), getLevel("./levels/original/lvl-1.txt"), 20, 0, true));
+//        MarioGame game = new MarioGame();
+//        // printResults(game.playGame(getLevel("../levels/original/lvl-1.txt"), 200, 0));
+       // printResults(game.runGame(new agents.human.Agent(), getLevel("./levels/original/lvl-1.txt"), 50, 0, true));
+       repeat(3);
     }
 }

@@ -1,4 +1,4 @@
-package agents.robinBaumgarten;
+package agents.collector;
 
 import engine.core.MarioForwardModel;
 import engine.core.MarioTimer;
@@ -16,21 +16,15 @@ public class AStarTree {
 
     private ArrayList<boolean[]> currentActionPlan;
     int ticksBeforeReplanning = 0;
-
+    public int SearchedStates = 0;
+    public int SearchedLose = 0;
     private MarioForwardModel search(MarioTimer timer) {
         SearchNode current = bestPosition;
         boolean currentGood = false;
         int maxRight = 176;
         while (posPool.size() != 0
                 && ((bestPosition.sceneSnapshot.getMarioFloatPos()[0] - currentSearchStartingMarioXPos < maxRight) || !currentGood)
-                && timer.getRemainingTime() > 0
-        ) {
-//            System.out.println(posPool.size());
-//            System.out.println(bestPosition.sceneSnapshot.getMarioFloatPos()[0]);
-//            System.out.println(currentSearchStartingMarioXPos);
-//            if(983 == (int)bestPosition.sceneSnapshot.getMarioFloatPos()[0]){
-//                System.out.println(posPool.size());
-//            }
+                && timer.getRemainingTime() > 0) {
             current = pickBestPos(posPool);
             if (current == null) {
                 return null;
@@ -48,25 +42,19 @@ public class AStarTree {
                 current.remainingTimeEstimated = realRemainingTime;
                 posPool.add(current);
             } else if (realRemainingTime - current.remainingTimeEstimated > 0.1) {
-
+                // current item is not as good as anticipated. put it back in pool and look for best again
                 current.remainingTimeEstimated = realRemainingTime;
                 posPool.add(current);
-
-                // current item is not as good as anticipated. put it back in pool and look for best again
-
             } else {
                 currentGood = true;
                 visited((int) current.sceneSnapshot.getMarioFloatPos()[0], (int) current.sceneSnapshot.getMarioFloatPos()[1], current.timeElapsed);
                 posPool.addAll(current.generateChildren());
             }
             if (currentGood) {
-                if (bestPosition.getRemainingTime() > current.getRemainingTime()) {
+                if (bestPosition.getRemainingTime() > current.getRemainingTime())
                     bestPosition = current;
-                }
                 if (current.sceneSnapshot.getMarioFloatPos()[0] > furthestPosition.sceneSnapshot.getMarioFloatPos()[0])
                     furthestPosition = current;
-
-//                break;
             }
         }
         if (current.sceneSnapshot.getMarioFloatPos()[0] - currentSearchStartingMarioXPos < maxRight
@@ -83,7 +71,12 @@ public class AStarTree {
 
         posPool = new ArrayList<SearchNode>();
         visitedStates.clear();
-        posPool.addAll(startPos.generateChildren());
+
+        ArrayList<SearchNode> tempPool = startPos.generateChildren();
+
+        SearchedStates += tempPool.size();
+
+        posPool.addAll(tempPool);
         currentSearchStartingMarioXPos = model.getMarioFloatPos()[0];
 
         bestPosition = startPos;
@@ -95,9 +88,10 @@ public class AStarTree {
 
         // just move forward if no best position exists
         if (bestPosition == null) {
-            for (int i = 0; i < 10; i++) {
-                actions.add(Helper.createAction(false, true, false, false, true));
-            }
+
+            //actions.add(Helper.createAction(false, true, false, false, true));
+            actions.add(Helper.createAction(false, true, false, true, true));
+
             return actions;
         }
 
@@ -117,7 +111,9 @@ public class AStarTree {
         SearchNode bestPos = null;
         float bestPosCost = 10000000;
         for (SearchNode current : posPool) {
-            float currentCost = current.getRemainingTime() + current.timeElapsed * 0.90f; // slightly bias towards furthest positions
+            //float currentCost = current.getRemainingTime() * 0.1f + current.timeElapsed * 0.10f - 10000 * current.getkilled(); // slightly bias towards furthest positions
+            float currentCost = - 10000 * current.getCoins() - 5000* current.ifwin();
+            //System.out.println("Mario killed: " + current.getkilled() + " CurrentCost: "+ currentCost);
             if (currentCost < bestPosCost) {
                 bestPos = current;
                 bestPosCost = currentCost;
@@ -129,7 +125,7 @@ public class AStarTree {
 
     public boolean[] optimise(MarioForwardModel model, MarioTimer timer) {
         int planAhead = 2;
-        int stepsPerSearch = 2;
+        int stepsPerSearch = 4;
 
         MarioForwardModel originalModel = model.clone();
         ticksBeforeReplanning--;

@@ -1,15 +1,14 @@
 package engine.core;
 
-import java.awt.image.VolatileImage;
-import java.util.ArrayList;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-
-import javax.swing.JFrame;
-
 import agents.human.Agent;
 import engine.helper.GameStatus;
 import engine.helper.MarioActions;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.image.VolatileImage;
+import java.util.ArrayList;
 
 public class MarioGame {
     /**
@@ -242,21 +241,23 @@ public class MarioGame {
         }
 
         MarioTimer agentTimer = new MarioTimer(MarioGame.maxTime);
-        this.agent.initialize(new MarioForwardModel(this.world.clone()), agentTimer);
-
         ArrayList<MarioEvent> gameEvents = new ArrayList<>();
         ArrayList<MarioAgentEvent> agentEvents = new ArrayList<>();
+        this.agent.initialize(new MarioForwardModel(this.world.clone(), gameEvents), agentTimer);
+
+
         while (this.world.gameStatus == GameStatus.RUNNING) {
             if (!this.pause) {
                 //get actions
                 agentTimer = new MarioTimer(MarioGame.maxTime);
-                boolean[] actions = this.agent.getActions(new MarioForwardModel(this.world.clone()), agentTimer);
+                boolean[] actions = this.agent.getActions(new MarioForwardModel(this.world.clone(), gameEvents), agentTimer, gameEvents);
                 if (MarioGame.verbose) {
                     if (agentTimer.getRemainingTime() < 0 && Math.abs(agentTimer.getRemainingTime()) > MarioGame.graceTime) {
                         System.out.println("The Agent is slowing down the game by: "
                                 + Math.abs(agentTimer.getRemainingTime()) + " msec.");
                     }
                 }
+
                 // update world
                 this.world.update(actions);
                 gameEvents.addAll(this.world.lastFrameEvents);
